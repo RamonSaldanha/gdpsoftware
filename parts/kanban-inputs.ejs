@@ -1,0 +1,72 @@
+<div class="kanban py-2" v-show="selected"> 
+  <div v-for="(list, index) in inputModel.lists" :key="list.name">
+    <div class="list-container rounded-lg">
+
+      <div class="list-header">
+        {{list.name}}
+        <div class="dropdown d-inline">
+          <i class="far fa-edit" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+          <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
+            <h6 class="dropdown-header">Editar nome da lista</h6>
+            <div class="dropdown-divider"></div>
+            <div class="px-2">
+              <input class="form-control" type="text" v-model="list.changedListName" />
+              <button type="button" class="btn mt-1 mb-2 btn-block btn-sm btn-secondary" @click="list.name = list.changedListName">Salvar nome da lista</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <draggable v-bind="dragOptions" :list="list.inputs" group="people">
+        <div
+          class="input-content rounded-lg shadow-sm"
+          v-for="(input, index) in list.inputs"
+          :key="input.name"
+        >
+    
+          <div class="options-input rounded">
+            <i class="far fa-question-circle" data-toggle="tooltip" :title="'{' + slugify(input.name) + '}'"></i>
+            <div class="dropdown d-inline">
+              <div class="d-inline" title="Editar campo" style="cursor: pointer;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="far fa-edit"></i>
+              </div>
+              <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
+                <h6 class="dropdown-header">Editar campo</h6>
+                <div class="dropdown-divider"></div>
+                <div class="px-2 text-center">
+                  <div class="form-group mb-2">
+                    <input class="form-control" type="text" v-model="input.changedName" />
+                  </div>
+                  <label>
+                    <input type="radio" id="text" v-model="input.type" value="text">
+                    Texto simples
+                  </label>
+                  <label>
+                    <input type="radio" id="textarea" v-model="input.type" value="textarea">
+                    Área de texto
+                  </label>
+                  <button type="button" class="btn mt-1 mb-2 btn-block btn-sm btn-secondary" @click="input.name = input.changedName">Salvar campo</button>
+                </div>
+              </div>
+            </div>
+            <i class="far fa-trash-alt text-danger"  @click="removeInput(list.id, index)" style="cursor: pointer;"></i>
+          </div>
+          
+          <div v-if="input.type == 'textarea'">
+            <textarea class="form-control" :name="input.name" :placeholder="input.name" rows="3"></textarea>
+          </div>
+
+          <div v-else>
+            <input class="form-control" :name="input.name" :placeholder="input.name" />
+          </div>
+          
+        </div>
+      </draggable>
+      <div class="alert alert-dark text-center mb-0" @click="addInput(list.id)" role="alert">
+        Adicionar campo
+      </div>
+    </div>
+  </div>
+  <a class="alert alert-dark text-center mx-2" @click="addList()" style="height: 50px;">Adicionar uma lista</a>
+</div>

@@ -1,0 +1,9 @@
+directories:
+  output: dist
+  buildResources: build
+productName: Gerador de Petições
+extraResources:
+  - filter:
+      - modelos/**/*
+      - documentos/**/*
+electronVersion: 6.0.8

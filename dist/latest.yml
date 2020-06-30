@@ -1,0 +1,8 @@
+version: 1.1.0
+files:
+  - url: gerador-de-peticoes-setup-1.1.0.exe
+    sha512: IxGQ+yKxJxy+oQ84bbA60bX++ThHuH9VqlrfsfMFscz9N+CQELkctjDxTaFq3rZC+z6xzrqTG1TkzFiR/TqJCg==
+    size: 97617710
+path: gerador-de-peticoes-setup-1.1.0.exe
+sha512: IxGQ+yKxJxy+oQ84bbA60bX++ThHuH9VqlrfsfMFscz9N+CQELkctjDxTaFq3rZC+z6xzrqTG1TkzFiR/TqJCg==
+releaseDate: '2020-06-29T03:25:58.144Z'

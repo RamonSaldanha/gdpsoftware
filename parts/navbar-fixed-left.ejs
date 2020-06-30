@@ -1,0 +1,62 @@
+<nav class="navbar navbar-expand-md navbar-dark  fixed-left p-0 text-center">
+  <a class="navbar-brand p-auto" href="">
+    <!-- RA -->
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav">
+
+      <li class="nav-item dropdown" style="z-index: 9999999!important;">
+        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+          <i class="far fa-file fa-2x"  data-toggle="tooltip" title="Criar novo modelo de petição."></i> <br />
+          Novo modelo
+        </a>
+        <div class="dropdown-menu shadow-sm" style="width: 250px;" aria-labelledby="navbarDropdown">
+          <h6 class="dropdown-header">Criar modelo</h6>
+          <div class="dropdown-divider"></div>
+          <div class="px-2 text-center">
+            <form id="createNewModel">
+              <div class="form-group mb-2">
+                <input type="text" class="form-control form-control-sm" name="new-model-name" placeholder="Nome do modelo" id="newModelName">
+              </div>
+              <button type="submit" class="btn btn-secondary btn-sm btn-block mb-2">Criar modelo</button>
+            </form>
+          </div>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="modal" data-target="#configModal" href="#">
+          <i class="fas fa-cog fa-2x" data-toggle="tooltip" title="Configurações"></i>
+          Definições
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="openModels" href="#">
+          <i class="far fa-folder-open fa-2x" data-toggle="tooltip" title="Abrir pasta de modelos"></i>
+          Modelos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="openDocuments" href="#">
+          <i class="fas fa-folder-open fa-2x" data-toggle="tooltip" title="Abrir pasta de modelos"></i>
+          Gerados
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="index.ejs">
+          <i class="fas fa-sync fa-2x" data-toggle="tooltip" title="Atualizar"></i>
+          Atualizar
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="modal" data-target="#helpModal" href="#">
+          <i class="far fa-question-circle fa-2x" data-toggle="tooltip" title="Abrir pasta de modelos"></i>
+          <br/>Ajuda
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>

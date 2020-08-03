@@ -33,7 +33,7 @@
     "bootstrap": "^4.3.1",
     "docxtemplater": "^3.14.3",
     "ejs-electron": "^2.0.3",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "pizzip": "^3.0.6",
     "popper.js": "^1.15.0",
     "slugify": "^1.4.0",

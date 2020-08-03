@@ -1,6 +1,7 @@
 const { dialog, Menu, shell } = require('electron').remote
 var slugify = require('slugify')
 
+
 var vm = new Vue({
   el: "#app",
   data: {
@@ -23,14 +24,14 @@ var vm = new Vue({
   created: function(){
     const fs = require('fs');
     const path = require('path');
- 
-
-    if(process.mainModule.filename.indexOf('app.asar') === -1){
+    const isDev = require('electron-is-dev');
+    
+    if (isDev) {
       var modelProperties = path.join(__dirname, "propriedades_de_modelos.txt");
     } else {
       var modelProperties = path.join(process.resourcesPath, "propriedades_de_modelos.txt");
     }
-
+    
     if (!fs.existsSync( modelProperties )){
       
       fs.writeFile(modelProperties, '[]', function (err) {
@@ -49,7 +50,7 @@ var vm = new Vue({
     modelName: function(oldModelName){
       var vm = this;
       
-      fs.readFile(localStorage.getItem('modelsFolder') + "\\" + fileNameDataDefault, 'utf8', function(err, data) {
+      fs.readFile(localStorage.getItem('modelsFolder') + platformFileWay() + fileNameDataDefault, 'utf8', function(err, data) {
         var inputModel = JSON.parse(data);
         // console.log(slugify(oldModelName))
         var model = inputModel.find( model => model.document === slugify(oldModelName));
@@ -86,7 +87,7 @@ var vm = new Vue({
     fixModelToggle(modelName) {
       var modelProperties = "propriedades_de_modelos.txt";
 
-      var modelPropertiesPath = localStorage.getItem('rootFolder') + "\\" + modelProperties;
+      var modelPropertiesPath = localStorage.getItem('rootFolder') + platformFileWay() + modelProperties;
       var vm = this;
 
       if (!fs.existsSync( modelPropertiesPath )){
@@ -183,19 +184,19 @@ var vm = new Vue({
       shell.openExternal(url);
     },
     openFile(filename){
-      shell.openItem(`${this.modelsFolder}\\${filename}`)
+      shell.openExternal(`file://${this.modelsFolder}${platformFileWay()}${filename}`)
     },
     saveDefaultInputsModel(){
 
       //OK 
 
       this.inputModel["document"] = "default";
-      fs.readFile(localStorage.getItem('modelsFolder')  + "\\" + fileNameDataDefault, 'utf8', function(err, data) {
+      fs.readFile(localStorage.getItem('modelsFolder')  + platformFileWay() + fileNameDataDefault, 'utf8', function(err, data) {
         var models = JSON.parse(data);
         var padrao = models.find( padrao => padrao.document === "default");
         models.splice(models.indexOf(padrao), 1);
         models.push(vm.inputModel);
-        fs.writeFile(localStorage.getItem('modelsFolder')  + "\\" + fileNameDataDefault,  JSON.stringify(models), function (err) {
+        fs.writeFile(localStorage.getItem('modelsFolder')  + platformFileWay() + fileNameDataDefault,  JSON.stringify(models), function (err) {
           if (err) return console.log(err);
           
           const toast = Swal.mixin({
@@ -218,7 +219,7 @@ var vm = new Vue({
       
       var vm = this
       vm.inputModel["document"] = slugify(vm.modelName);
-      fs.readFile(localStorage.getItem('modelsFolder')  + "\\" + fileNameDataDefault, 'utf8', function(err, data) {
+      fs.readFile(localStorage.getItem('modelsFolder')  + platformFileWay() + fileNameDataDefault, 'utf8', function(err, data) {
         
         var models = JSON.parse(data);
         var model = models.find( model => model.document === slugify(vm.modelName));
@@ -229,7 +230,7 @@ var vm = new Vue({
         } else {
           models.push(vm.inputModel);
         }
-        fs.writeFile(localStorage.getItem('modelsFolder')  + "\\" + fileNameDataDefault,  JSON.stringify(models), function (err) {
+        fs.writeFile(localStorage.getItem('modelsFolder')  + platformFileWay() + fileNameDataDefault,  JSON.stringify(models), function (err) {
           if (err) return console.log(err);
 
           const toast = Swal.mixin({

@@ -10,6 +10,14 @@ var slugify = require('slugify')
 var documents = [];
 
 var fileNameDataDefault = "padrao_de_campos.txt";
+const platformFileWay = () => {
+  if(process.platform === "darwin") {
+    return "/";
+  } else {
+    return "\\";
+  }
+}
+
 
 var documentsFolder = localStorage.getItem('documentsFolder');
 var modelsFolder = localStorage.getItem('modelsFolder');
@@ -36,14 +44,14 @@ function fromDir(startPath,filter){
   var files = fs.readdirSync( startPath ) ;
   var modelProperties = "propriedades_de_modelos.txt";
 
-  var modelPropertiesPath = localStorage.getItem('rootFolder') + "\\" + modelProperties;
+  var modelPropertiesPath = localStorage.getItem('rootFolder') + platformFileWay() + modelProperties;
   
   var properties = JSON.parse(fs.readFileSync(modelPropertiesPath, 'utf8'));
   var modelsWithFixedField = [];
 
   for(var i=0; i<files.length; i++){
 
-    var filename = startPath + '/' + files[i];
+    var filename = startPath + platformFileWay() + files[i];
 
     var stat = fs.lstatSync(filename);
     if (stat.isDirectory()){
@@ -74,12 +82,13 @@ function remove_character(str_to_remove, str) {
   return str.replace(reg, '')
 }
 
-function isDev() {
-  return process.mainModule.filename.indexOf('app.asar') === -1;
-}
+// function isDev() {
+//   return process.mainModule.filename.indexOf('app.asar') === -1;
+// }
 
 function folderWay(folderOrFile) {
-  if(isDev()){
+  const isDev = require('electron-is-dev');
+  if(isDev){
     return path.join(__dirname, folderOrFile);
   } else {
     // console.log( path.join(process.resourcesPath, folderOrFile))
@@ -100,7 +109,7 @@ function updateModels ( ) {
 
 function verifyIfExistsData() {
 
-  var fileDataPath = localStorage.getItem('modelsFolder') + "\\" + fileNameDataDefault;
+  var fileDataPath = localStorage.getItem('modelsFolder') + platformFileWay() + fileNameDataDefault;
   // console.log(fileDataPath)
   if (!fs.existsSync( fileDataPath )){
     fs.appendFile(fileDataPath, '[{"document":"default","lists":[{"name":"Nova lista","id":394,"inputs":[{"name":"Novo Campo"}]}]}]', function (err) {
@@ -157,24 +166,24 @@ $(document).ready(function(){
 
   $("#openModels").click(function(){
     const {shell} = require('electron');
-    shell.openItem(vm.modelsFolder)
+    shell.openExternal('file://'+vm.modelsFolder)
   })
 
   $("#openDocuments").click(function(){
     const {shell} = require('electron');
-    shell.openItem(vm.documentsFolder);
+    shell.openExternal('file://'+vm.documentsFolder);
   })
 
   $("#createNewModel").submit((e)=>{
     e.preventDefault();
     var filename = $("#createNewModel").serializeArray()[0].value + '.docx';
-    if (fs.existsSync(`${localStorage.getItem('modelsFolder')}\\${filename}`)) {
+    if (fs.existsSync(`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`)) {
       selectModel.fire({
         type: 'error',
         title: 'Já existe um documento com esse nome.'
       })
     } else {
-      fs.writeFile(`${localStorage.getItem('modelsFolder')}\\${filename}`, '', function (err) {
+      fs.writeFile(`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`, '', function (err) {
         if (err) throw err;
         selectModel.fire({
           type: 'success',
@@ -182,7 +191,7 @@ $(document).ready(function(){
           confirmButtonText: 'Abrir modelo no editor de texto.',
           preConfirm: () => {
             const {shell} = require('electron');
-            shell.openItem((`${localStorage.getItem('modelsFolder')}\\${filename}`));
+            shell.openItem((`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`));
           }
         })
       });
@@ -207,8 +216,8 @@ $(document).ready(function(){
 
     //Load the docx file as a binary
     try {
-      // console.log(vm.modelsFolder + "\\" + modelName);
-      var content = fs.readFileSync(vm.modelsFolder + "\\" + modelName, 'binary');
+      // console.log(vm.modelsFolder + platformFileWay() + modelName);
+      var content = fs.readFileSync(vm.modelsFolder + platformFileWay() + modelName, 'binary');
     } catch (err) {
       selectModel.fire({
         type: 'error',

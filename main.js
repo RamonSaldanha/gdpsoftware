@@ -20,7 +20,7 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
     },
-    icon: path.join(__dirname, '/assets/img/icon.png')
+    icon: path.join(__dirname, '/assets/img/icon.ico')
   });
 
   mainWindow.maximize()

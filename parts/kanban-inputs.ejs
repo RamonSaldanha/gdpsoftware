@@ -2,11 +2,13 @@
   <div v-for="(list, index) in inputModel.lists" :key="list.name">
     <div class="list-container rounded-lg">
 
-      <div class="list-header">
+      <div class="list-header d-flex justify-content-between">
         {{list.name}}
         <div class="dropdown d-inline">
-          <i class="far fa-edit" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
-          <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
+          <button class="btn btn-sm" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <h6 class="dropdown-header">Editar nome da lista</h6>
             <div class="dropdown-divider"></div>
             <div class="px-2">
@@ -20,18 +22,18 @@
 
       <draggable v-bind="dragOptions" :list="list.inputs" group="people">
         <div
-          class="input-content rounded-lg shadow-sm"
+          class="input-content shadow-sm rounded-lg"
           v-for="(input, index) in list.inputs"
           :key="input.name"
         >
     
           <div class="options-input rounded">
-            <i class="far fa-question-circle" data-toggle="tooltip" :title="'{' + slugify(input.name) + '}'"></i>
+            <i class="fas fa-info-circle" data-toggle="tooltip" :title="'{' + slugify(input.name) + '}'"></i>
             <div class="dropdown d-inline">
               <div class="d-inline" title="Editar campo" style="cursor: pointer;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="far fa-edit"></i>
+                <i class="fas fa-pencil-alt"></i>
               </div>
-              <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                 <h6 class="dropdown-header">Editar campo</h6>
                 <div class="dropdown-divider"></div>
                 <div class="px-2 text-center">
@@ -50,11 +52,11 @@
                 </div>
               </div>
             </div>
-            <i class="far fa-trash-alt text-danger"  @click="removeInput(list.id, index)" style="cursor: pointer;"></i>
+            <i class="far fa-trash-alt"  @click="removeInput(list.id, index)" style="cursor: pointer;"></i>
           </div>
           
           <div v-if="input.type == 'textarea'">
-            <textarea class="form-control" :name="input.name" :placeholder="input.name" rows="3"></textarea>
+            <textarea class="form-control" :name="input.name" :placeholder="input.name" rows="5"></textarea>
           </div>
 
           <div v-else>
@@ -63,10 +65,10 @@
           
         </div>
       </draggable>
-      <div class="alert alert-dark text-center mb-0" @click="addInput(list.id)" role="alert">
-        Adicionar campo
+      <div class="alert alert-dark text-center mb-0" style=" cursor: pointer" @click="addInput(list.id)" role="alert">
+        <i class="fas fa-plus"></i> Adicionar campo
       </div>
     </div>
   </div>
-  <a class="alert alert-dark text-center mx-2" @click="addList()" style="height: 50px;">Adicionar uma lista</a>
+  <a class="alert alert-dark text-center mx-2" @click="addList()" style="height: 50px; cursor: pointer;"><i class="fas fa-plus"></i> Adicionar uma lista</a>
 </div>

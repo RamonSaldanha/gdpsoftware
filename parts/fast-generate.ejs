@@ -1,0 +1,32 @@
+
+<div id="fast-form">
+  <div v-for="(list, index) in inputModel.lists" :key="list.name">
+    <div>
+  
+      <div class="list-header d-flex justify-content-between">
+        {{list.name}}
+      </div>
+      <div v-bind="dragOptions" :list="list.inputs" group="people">
+        <div
+          class="input-content"
+          v-for="(input, index) in list.inputs"
+          :key="input.name"
+        >
+    
+          <div class="options-input rounded"><i class="fas fa-info-circle" data-toggle="tooltip" :title="'{' + slugify(input.name) + '}'"></i></div>
+          
+          <label v-if="input.type == 'textarea'">
+            {{input.name}}
+            <textarea class="form-control" :name="input.name" rows="5"></textarea>
+          </label>
+  
+          <label v-else>
+            {{input.name}}
+            <input class="form-control" :name="input.name" />
+          </label>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

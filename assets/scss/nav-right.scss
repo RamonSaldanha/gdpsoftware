@@ -1,0 +1,156 @@
+@import "./variaveis.scss";
+
+.gutter {
+  border-left: 1px solid $border-color;
+  cursor: e-resize;
+  z-index: 1000;
+}
+
+#right {
+    height: 100%;
+    #docxviewer {
+      width: 100%;
+      font-size: 80%;
+      padding: 15px;
+      img {
+        max-width: 100%;
+        
+      }
+      a {
+        white-space: pre-line;
+        word-break: break-all;
+      }
+    }
+    .nav-right-modal {
+      height: 100%;
+      margin-left: -10px;
+      #tabs-right {
+        .nav-tabs.nav-link {
+          border-top-left-radius: none !important;
+        }
+        > li:nth-child(1) {
+      
+          > a:nth-child(1) {
+            border-left: 1px solid $border-color;
+            border-top-color: $border-color;
+            border-right-color: $border-color;
+        
+          }
+        }
+      }
+      #fast-form {
+        padding: 15px;
+        .list-header {
+          text-align: center;
+          font-weight: 600;
+          font-size: 18px;
+          margin-bottom: 10px;
+          color: $font-color;
+        }
+        .input-content {
+          margin: 0px;
+        }
+        label {
+          width: 100%;
+        }
+        .form-control {
+          outline: 0;
+          background-color: $bg-color-1;
+          width: 100%;
+          border: 0;
+          margin: 0 0 15px;
+          padding: 15px;
+          box-sizing: border-box;
+          font-size: 14px;
+          min-height: 40px;
+        }
+      }
+      .form-generate-faster {
+        height: calc(100% - #{$nav-right-header-height} - #{$progress-top-height} - #{$nav-right-footer-height});
+        overflow: auto;
+        .list-container {
+          background-color: #fff;
+        }
+  
+        .input-content {
+          position: relative;  
+          .options-input {
+            right: 10px;
+            top: -20px;
+            position: absolute;
+            display: none;
+            background: theme_color('secondary');
+            padding: 4px 8px;
+            color: #fff;
+            // border-left: 1px solid $border-color;
+            // border-top: 1px solid $border-color;
+            // border-right: 1px solid $border-color;
+            box-shadow: 0 2px 8px rgba(25, 25, 25, 0.3);
+  
+            i {
+              margin-right: 4px;
+            }
+  
+            &:after {
+              content: '';
+              position: absolute;
+              bottom: 0;
+              left: 50%;
+              width: 0;
+              height: 0;
+              border: 0.4em solid transparent;
+              border-top-color: theme_color('secondary');
+              border-bottom: 0;
+              margin-left: -0.4em;
+              margin-bottom: -0.4em;
+            }
+          }
+  
+          &:hover .options-input {
+            display: block;
+            -webkit-animation: fadein .5s;
+            /* Safari, Chrome and Opera > 12.1 */
+            -moz-animation: fadein .5s;
+            /* Firefox < 16 */
+            -ms-animation: fadein .5s;
+            /* Internet Explorer */
+            -o-animation: fadein .5s;
+            /* Opera < 12.1 */
+            animation: fadein .5s;
+          }
+  
+          .input-header {
+            font-weight: normal;
+            font-size: 14px;
+            border-bottom: 1px solid #F0F0F0
+          }
+  
+          margin-bottom: 10px;
+        }
+      }
+  
+      .nav-right-header {
+        height: $nav-right-header-height;
+        display: flex;
+        padding: 20px;
+        font-weight: 600;
+        color: $font-color;
+        i {
+          color: $font-color-2;
+        }
+      }
+      .nav-right-footer {
+        height: $nav-right-footer-height;
+        display: flex;
+        padding: 20px;
+        font-weight: 600;
+        color: $font-color;
+        width: 100%;
+        border-top: 1px solid $border-color;
+        i {
+          color: $font-color-2;
+        }
+      }
+    }
+  }
+  

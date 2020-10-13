@@ -1,27 +1,35 @@
 ﻿<!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="./assets/css/main.css">
   <link rel="stylesheet" href="./node_modules/sweetalert2/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="./node_modules/quill/dist/quill.snow.css">
   <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-  <title>Gerador de petições - software Jurídico</title>
+  <title>Colabo</title>
 </head>
+
 <body>
- 
+
   <div class="main d-flex">
-    
+
     <%- include('parts/navbar-fixed-left') %>
-    
+
     <div id="app">
-      
+
+
+      <!-- navtop início -->
+
       <nav class="navbar fixed-top nav-controller">
-        
+
         <div>
-          <button type="button" v-show="!selected" @click="selected = !selected" class="btn btn-md btn-primary ml-auto" id="nextStep" :disabled="modelName == ''">Preencher <i class="fas fa-chevron-right ml-1"></i></i></button>
-          <button type="button" v-show="selected" @click="selected = !selected" class="btn btn-primary btn-sm" id="nextStep"><i class="fas fa-chevron-left mr-1"></i> Escolher outro modelo</button>
+          <button type="button" v-show="!selected" @click="selected = !selected" class="btn btn-md btn-primary ml-auto"
+            id="nextStep" :disabled="modelName == ''">Preencher e editar<i class="fas fa-chevron-right ml-1"></i></i></button>
+          <button type="button" v-show="selected" @click="selected = !selected" class="btn btn-primary btn-sm"
+            id="nextStep"><i class="fas fa-chevron-left mr-1"></i> Escolher outro modelo</button>
         </div>
         <small v-show="modelName" class="text-center">
           {{ modelName }}
@@ -34,7 +42,8 @@
         </div>
         <div>
           <div class="btn-group" v-show="selected">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="false">
               <i class="far fa-save mr-1"></i> Salvar padrão
             </button>
             <div class="dropdown-menu dropdown-menu-lg-right">
@@ -44,69 +53,184 @@
           </div>
           <!-- <button type="button" v-show="selected" @click="saveDefaultInputsModel" class="btn btn-outline-primary btn-sm ml-auto mr-1">SALVAR PADRÃO </button> -->
           <!-- <button type="button" v-show="selected" @click="saveCustomInputsModel" class="btn btn-outline-primary btn-sm ml-auto mr-1">SALVAR CUSTOM </button> -->
-          <button type="submit" form="generate-model" v-show="selected" class="btn btn-secondary btn-sm">Gerar documento <i class="fas fa-download ml-1"></i></button>
+          <button type="submit" form="generate-model" v-show="selected" class="btn btn-secondary btn-sm">Gerar documento
+            <i class="fas fa-download ml-1"></i>
+          </button>
         </div>
-      </nav>
-      
-      <div class="container-fluid h-100 content">
-        <form class="h-100 py-3" id="generate-model">
-          <div class="documents" v-show="!selected">
-            <center>
-              <div class="input-group input-group w-50">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-search"></i></span>
-                </div>
-                <input type="text" class="form-control" v-model="search" placeholder="Busque um modelo pelo nome" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
-              </div>
-            </center>
-            <div class="row">
-              <div class="col-xl-2 col-lg-3 col-sm-4" v-for="model in filteredModels">
-                <div class="form__answer rounded-lg">
-                  <div style="z-index:1;position: absolute; top: 25px; left: 16px; padding: 5px 10px; cursor:pointer;">
-                    <i v-show="model.fixed" class="fas fa-thumbtack text-danger"></i>
-                  </div>
-                  <!-- DROPDOWN PARA MARCADORES -->
-                  <div class="dropdown px-2 border-bottom border-left" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="z-index:1;position: absolute; top: 25px; right: 16px; width:40px; height: 40px; cursor:pointer;">
-                    <a href="#" class="d-flex h-100 text-muted text-decoration-none">
-                      <i class="fas fa-chevron-down m-auto"></i>
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" @click="openFile(model.model_name)">Abrir</a>
-                      <a v-if="model.fixed" class="dropdown-item" @click="fixModelToggle(model.model_name)">Desfixar modelo</a>
-                      <a v-else class="dropdown-item" @click="fixModelToggle(model.model_name)">Fixar modelo</a>
-                    </div>
-                  </div>
 
-                  <input type="radio" name="documents" v-model="modelName" :id="model.model_name" :value="model.model_name"> 
-                  <label :for="model.model_name" class="d-flex flex-column">
-                    <img src="assets/img/doc.svg" height="45px" />
-                    <div class="m-auto p-1">
-                      {{model.model_name}}
-                    </div>
-                  </label> 
+      </nav>
+
+      <!-- navtop fim -->
+
+      <div class="row m-0 h-100">
+        <div id="files" class="position-relative h-100 vai-dale" :class="{ 'w-100': selected }">
+          <form class="h-100 col content" id="generate-model">
+            <div class="documents" v-show="!selected">
+              <div class="d-flex align-items-center">
+                <div class="input-group input-group mt-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-search"></i></span>
+                  </div>
+                  <input type="text" class="form-control" v-model="search" placeholder="Busque um modelo pelo nome"
+                    aria-label="Sizing example input" aria-describedby="inputGroup-sizing-lg">
                 </div>
+              </div>
+
+              <!-- dropdown opções botão direito -->
+              <div class="dropdown-menu options-right-click" id="">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#novoModelo">Novo modelo</a>
+                <!-- <a class="dropdown-item disabled" href="#" tabindex="-1" aria-disabled="true">Disabled link</a> -->
+                <!-- <a class="dropdown-item" href="#">Another link</a> -->
+              </div>
+
+              <ul class="row nav nav-tabs my-4" id="mainTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                    aria-controls="home" aria-selected="true">
+                    Seus modelos
+                  </a>
+                </li>
+                <!-- <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="comunity-tab" data-toggle="tab" href="#comunity" role="tab"
+                    aria-controls="comunity" aria-selected="false">
+                    Modelos da comunidade
+                  </a>
+                </li> -->
+              </ul>
+
+              <div class="tab-content w-100" id="mainTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                  <div class="row">
+                    <div class="col-xl-2 col-lg-3 menu-context-file" v-for="model in filteredModels">
+
+                      <div class="form__answer rounded-lg menu-context-file">
+                        <div
+                          style="z-index:1;position: absolute; top: 0px; left: 16px; padding: 5px 10px; cursor:pointer;">
+                          <i v-show="model.fixed" class="fas fa-thumbtack text-danger"></i>
+                        </div>
+
+                        <!-- DROPDOWN PARA AÇÕES -->
+                        <div id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <!-- <a href="#" class="d-flex h-100 text-muted text-decoration-none">
+                            <i class="fas fa-chevron-down m-auto"></i>
+                          </a> -->
+                          <div class="dropdown-menu" style="cursor: pointer;" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" @click="openFile(model.model_name)">Abrir</a>
+                            <a v-if="model.fixed" class="dropdown-item"
+                              @click="fixModelToggle(model.model_name)">Desfixar
+                              modelo</a>
+                            <a v-else class="dropdown-item" @click="fixModelToggle(model.model_name)">Fixar modelo</a>
+                          </div>
+                        </div>
+
+                        <input type="radio" style="display: none;" name="documents" v-model="modelName"
+                          :id="model.model_name" :value="model.model_name">
+                        <label :for="model.model_name" class="d-flex h-100 flex-column justify-content-between">
+                          <img src="assets/img/icons/document.png" width="45px" />
+                          <div class="footer-label w-100 pl-2 d-flex align-items-center">
+                            <!-- 
+                            não pode criar uma div aqui dentro
+                            isso porque buga o right click 
+                            -->
+                            {{model.model_name}}
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane fade" id="comunity" role="tabpanel" aria-labelledby="comunity-tab">...</div>
+                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
               </div>
             </div>
+
+            <%- include('parts/kanban-inputs') %>
+          </form>
+        </div>
+
+        <!-- Se estiver na página de edição não aparece o menu right  -->
+        <div id="right" class="position-relative h-100" :class="{ 'd-none': selected }">
+          <div :class="[rightSide ? 'd-none' : 'd-block']">
+            <router-view></router-view>
           </div>
-          
-          <%- include('parts/kanban-inputs') %>
-          
-        </form>
+          <div :class="[rightSide ? 'nav-right-modal' : 'd-none']">
+            <form class="h-100" id="generate-model-fast">
+              <div class="nav-right-header">
+                <div class="d-flex w-100 my-auto">
+                  <div>Gerador documento (rápido)</div>
+                  <div class="ml-auto">
+                    <button type="button" @click.prevent="closeModalRight" class="btn btn-link">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+ 
+              </div>
+              <div class="p-1">
+                <!-- {{ filledFields }} / {{ totalFields }} - {{filledPercent}} -->
+                <div class="progress w-100" style="height: 14px;">
+                  <div class="progress-bar" role="progressbar" v-bind:style="{width: filledPercent + '%'}">{{filledPercent}}%</div>
+                </div>
+              </div>
+              <div class="form-generate-faster">
+                <ul class="nav nav-tabs nav-fill" id="tabs-right" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="pills-form-tab" data-toggle="pill" href="#pills-form" role="tab"
+                      aria-controls="pills-form" aria-selected="true">
+                      Preenchimento
+                    </a>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-fast-edit" role="tab"
+                      aria-controls="pills-fast-edit" aria-selected="false">
+                      Visão rápida
+                    </a>
+                  </li>
+                </ul>
+
+                <div class="tab-content" id="tabs-rightContent">
+                  <div class="tab-pane fade show active" id="pills-form" role="tabpanel"
+                    aria-labelledby="pills-form-tab">
+                    <%- include('parts/fast-generate') %>
+                  </div>
+                  <div class="tab-pane fade" id="pills-fast-edit" role="tabpanel" aria-labelledby="pills-fast-edit-tab">
+                    <%- include('parts/fast-view') %>
+                  </div>
+                </div>
+              </div>
+
+              <div class="nav-right-footer">
+                <button type="submit" form="generate-model-fast" class="btn btn-secondary btn-block">Gerar documento <i class="fas fa-download ml-1 text-light"></i></button>
+              </div>
+            </form>
+          </div>
+        </div>
+
       </div>
-      
+      <%- include('parts/novo-modelo-modal') %>
+
       <%- include('parts/definicoes') %>
       <%- include('parts/ajuda') %>
     </div>
-
-    
   </div>
-  
+
+  <!-- Editor de texto caso precise em algum momento já está implementado -->
+  <script src="./node_modules/quill/dist/quill.min.js"></script>
+  <script src="./node_modules/vue-quill-editor/dist/vue-quill-editor.js"></script>
+
+  <script src="./node_modules/split.js/dist/split.min.js"></script>
   <script src="./node_modules/vue/dist/vue.min.js"></script>
+  <script src="./node_modules/vue-router/dist/vue-router.min.js"></script>
   <script src="./node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
   <script src="./assets/js/vue.js"></script>
   <script src="./assets/js/main.js"></script>
+  <!-- expandir menu right -->
+  <script src="./assets/js/split.js"></script>
+  <!-- dropdown menu context in files -->
+  <script src="./assets/js/dropd-right-click.js"></script>
   <script src="./node_modules/sortablejs/Sortable.min.js"></script>
   <script src="./node_modules/vuedraggable/dist/vuedraggable.umd.min.js"></script>
-  
+
 </body>
+
 </html>

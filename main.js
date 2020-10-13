@@ -12,7 +12,6 @@ function createWindow () {
   const fs = require("fs");
   const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
 
-  
   mainWindow = new BrowserWindow({
     width: width,
     height: height,
@@ -25,14 +24,11 @@ function createWindow () {
 
   mainWindow.maximize()
 
-
   mainWindow.setMenuBarVisibility(false);
-  
 
   mainWindow.loadFile('index.ejs')
 
   mainWindow.on('closed', function () {
-
     mainWindow = null
   })
 }

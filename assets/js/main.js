@@ -4,6 +4,8 @@ const tooltip = require('popper.js');
 var fs = require('fs');
 var path = require('path');
 var slugify = require('slugify')
+const docx = require("docx")
+const { Document, Packer, Paragraph, TextRun } = docx;
 
 /* assistir alterações na pasta para atualizar as opções de modelo */
 
@@ -142,7 +144,6 @@ fs.watch(vm.modelsFolder, (eventType, filename) => {
 });
 
 $(document).ready(function(){
-
   // reiniciar padrão removendo pastas padrões
   // localStorage.removeItem('documentsFolder');
   // localStorage.removeItem('modelsFolder');
@@ -174,43 +175,55 @@ $(document).ready(function(){
     shell.openExternal('file://'+vm.documentsFolder);
   })
 
-  $("#createNewModel").submit((e)=>{
+  $("#novoModeloForm").submit((e)=>{
     e.preventDefault();
-    var filename = $("#createNewModel").serializeArray()[0].value + '.docx';
+    var filename = $("#novoModeloForm").serializeArray()[0].value + '.docx';
     if (fs.existsSync(`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`)) {
       selectModel.fire({
         type: 'error',
         title: 'Já existe um documento com esse nome.'
       })
     } else {
-      fs.writeFile(`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`, '', function (err) {
-        if (err) throw err;
-        selectModel.fire({
-          type: 'success',
-          title: 'O documento foi gerado!',
-          confirmButtonText: 'Abrir modelo no editor de texto.',
-          preConfirm: () => {
-            const {shell} = require('electron');
-            shell.openItem((`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`));
-          }
-        })
+      const docx = new Document();
+      docx.addSection({
+          properties: {},
+          children: [
+              new Paragraph({
+                  children: [
+                      new TextRun("Novo modelo"),
+                  ],
+              }),
+          ],
       });
+      Packer.toBuffer(docx).then((buffer)=>{
+        try {
+          fs.writeFileSync(`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`, buffer);
+          selectModel.fire({
+            type: 'success',
+            title: 'O documento foi gerado!',
+            confirmButtonText: 'Abrir modelo no editor de texto.',
+            preConfirm: () => {
+              const {shell} = require('electron');
+              shell.openItem((`${localStorage.getItem('modelsFolder')}${platformFileWay()}${filename}`));
+            }
+          })
+        } catch (e) {
+          console.log(e)
+        }
+
+      })
     }
 
   });
 
   $("#generate-model").submit(function(e){
     e.preventDefault();
-
     var modelName = $("[name='documents']:checked").val();
     var data = { };
     $.each($('#generate-model').serializeArray(), function() {
       data[slugify(this.name)] = this.value;
     });
 
-
-    // console.log(data)
-    
     var PizZip = require('pizzip');
     var Docxtemplater = require('docxtemplater');
 
@@ -252,7 +265,74 @@ $(document).ready(function(){
     var buf = doc.getZip()
     .generate({type: 'nodebuffer'});
     var today = new Date();
-    let fileName = `${vm.documentsFolder}\\(${today.getDate()}-${today.getMonth()}-${today.getFullYear()} ${today.getHours()}hrs ${today.getMinutes()}min) ${remove_character('.docx', modelName)}.docx`
+    
+    var month = (today.getMonth()+1).toString();
+    let fileName = `${vm.documentsFolder}\\(${today.getDate()}-${month}-${today.getFullYear()} ${today.getHours()}hrs ${today.getMinutes()}min) ${remove_character('.docx', modelName)}.docx`
+    // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
+    fs.writeFileSync(fileName, buf);
+
+    documentCreated.fire({
+      type: 'success',
+      title: 'O documento foi gerado!',
+      preConfirm: () => {
+        const {shell} = require('electron');
+        shell.showItemInFolder(fileName)
+      }
+    })
+  })
+
+  $("#generate-model-fast").submit(function(e){
+    e.preventDefault();
+    var modelName = $("[name='documents']:checked").val();
+    var data = { };
+    $.each($('#generate-model-fast').serializeArray(), function() {
+      data[slugify(this.name)] = this.value;
+    });
+
+    var PizZip = require('pizzip');
+    var Docxtemplater = require('docxtemplater');
+
+    //Load the docx file as a binary
+    try {
+      // console.log(vm.modelsFolder + platformFileWay() + modelName);
+      var content = fs.readFileSync(vm.modelsFolder + platformFileWay() + modelName, 'binary');
+    } catch (err) {
+      selectModel.fire({
+        type: 'error',
+        title: 'Não foi possível gerar um documento, selecione um modelo antes!'
+      })
+    }
+    
+    var zip = new PizZip(content);
+    
+    var doc = new Docxtemplater();
+    doc.loadZip(zip);
+    
+    //set the templateVariables
+    doc.setData(data);
+    
+    try {
+      // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+      doc.render()
+    }
+    catch (error) {
+      var e = {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        properties: error.properties,
+      }
+      // console.log(JSON.stringify({error: e}));
+      // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
+      throw error;
+    }
+    
+    var buf = doc.getZip()
+    .generate({type: 'nodebuffer'});
+    var today = new Date();
+  
+    var month = (today.getMonth()+1).toString();
+    let fileName = `${vm.documentsFolder}\\(${today.getDate()}-${month}-${today.getFullYear()} ${today.getHours()}hrs ${today.getMinutes()}min) ${remove_character('.docx', modelName)}.docx`
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
     fs.writeFileSync(fileName, buf);
 

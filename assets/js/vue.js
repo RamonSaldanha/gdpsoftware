@@ -10,7 +10,6 @@ var Home = Vue.component('home',{
       Ficou mais fácil lidar com demandas repetitivas. <br /> <br />
       Tenha um ótimo dia de trabalho!🌻
     </h4>
-    <router-link to="/login">Fazer login</router-link>
   </div>
   `
 });
@@ -18,10 +17,39 @@ var Home = Vue.component('home',{
 var Login = Vue.component('login', {
   template: `
   <div>
-    Formulário de login
-    <router-link to="/">RARA</router-link>
+    <router-link to="/" class="btn btn-sm mt-2">
+      <i class="fas fa-arrow-left"></i>
+    </router-link>
+    <div class="row">
+      <div class="col-12 pr-4">
+        <h4 class="d-block mt-4 text-muted text-center">
+          Faça login para compartilhar e baixar novos modelos da comunidade.
+        </h4>
+        <form>
+          <div class="form-group">
+            <label for="exampleInputEmail1">E-mail</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" v-model="formLogin.email" placeholder="Digite seu e-mail">
+            {{ formLogin.email }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Senha</label>
+            <input type="password" class="form-control" id="exampleInputPassword1" v-model="formLogin.password" placeholder="Digite sua senha">
+            {{ formLogin.password }}
+          </div>
+          <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+      </div>
+    </div>
   </div>
-  `
+  `,
+  data() {
+    return {
+      formLogin: {
+        email: '',
+        password: ''
+      },
+    }
+  },
 });
 
 const routes = [
@@ -34,7 +62,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to)
   next()
 })
 

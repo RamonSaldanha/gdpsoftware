@@ -1,8 +1,8 @@
 <div class="float-right p-3">
-  <button type="button" class="btn btn-sm btn-outline-dark" @click="fixModelToggle(modelName)">
-    <i class="fas fa-thumbtack"></i>
+  <button type="button" class="btn btn-sm" @click="fixModelToggle(modelName)" data-toggle="tooltip" title="Fixar modelo">
+    <i class="fas fa-thumbtack text-danger"></i>
   </button>
-  <button type="button" class="btn btn-sm btn-outline-dark" @click="openFile(modelName)">
+  <button type="button" class="btn btn-sm" @click="openFile(modelName)" data-toggle="tooltip" title="Abrir modelo no word">
     <i class="fas fa-external-link-alt"></i>
   </button>
 </div>

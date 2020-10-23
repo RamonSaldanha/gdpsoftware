@@ -10,9 +10,6 @@ var Home = Vue.component('home',{
       Ficou mais fácil lidar com demandas repetitivas. <br /> <br />
       Tenha um ótimo dia de trabalho!🌻
     </h4>
-    <router-link to="/autenticathed" class="btn btn-sm mt-2">
-      Protegido
-    </router-link>
   </div>
 
   `
@@ -59,11 +56,10 @@ var Login = Vue.component('login', {
 const routes = [
   { path: '/', name: 'home', component: Home },
   { path: '/login', name: 'login', component: Login },
-  { path: '/autenticathed', name: 'login', meta: { auth: true }, component: Login }
+  { path: '/profile', name: 'profile', meta: { auth: true }, component: Login }
 ]
 
 const router = new VueRouter({
-
   routes // short for `routes: routes`
 })
 

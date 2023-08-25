@@ -1,6 +1,6 @@
 {
-  "name": "Colabo",
-  "version": "1.0.0",
+  "name": "advable-colabo-v2",
+  "version": "2.0.0",
   "description": "Um gerador de documentos jurídicos",
   "main": "main.js",
   "scripts": {

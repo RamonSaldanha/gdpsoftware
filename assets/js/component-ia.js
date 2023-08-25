@@ -114,6 +114,7 @@ const IaGenerator = {
 					text: 'Clique em Definições e preencha o campo" para configurar sua API Key',
 					icon: 'warning',
 				})
+				vm.loading = false;
 
 				return
 			}

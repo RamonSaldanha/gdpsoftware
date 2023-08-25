@@ -2,6 +2,7 @@ const { dialog, Menu, shell } = require('electron').remote
 var slugify = require('slugify');
 const mammoth = require("mammoth");
 
+
 var Home = Vue.component('home',{
   template: `
   <div class="p-4 d-flex flex-column justify-content-center">
@@ -53,10 +54,15 @@ var Login = Vue.component('login', {
   },
 });
 
+
 const routes = [
   { path: '/', name: 'home', component: Home },
   { path: '/login', name: 'login', component: Login },
-  { path: '/profile', name: 'profile', meta: { auth: true }, component: Login }
+  { path: '/profile', name: 'profile', meta: { auth: true }, component: Login },
+  // criar rota com um parametro dinamico
+  { path: '/ia-generator/:modelo', name: 'ia-generator', component: window.IaGenerator },
+
+  // { path: '/ia-generator/:modelo', name: 'ia-generator', component: window.IaGenerator },
 ]
 
 const router = new VueRouter({
@@ -89,6 +95,8 @@ var vm = new Vue({
     selected: false,
     documentsFolder: '',
     modelsFolder: '',
+    loading: false,
+    apiKey: '',
     docxInHtml: '',
     inputModel: {
       document: "",
@@ -410,6 +418,7 @@ var vm = new Vue({
 
       localStorage.setItem('documentsFolder', this.documentsFolder);
       localStorage.setItem('modelsFolder', this.modelsFolder);
+      localStorage.setItem('apiKey', this.apiKey);
       
       updateModels ();
   

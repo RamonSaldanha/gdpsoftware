@@ -22,6 +22,7 @@ function createWindow () {
     icon: path.join(__dirname, '/assets/img/icon.ico')
   });
 
+
   mainWindow.maximize()
 
   mainWindow.setMenuBarVisibility(false);

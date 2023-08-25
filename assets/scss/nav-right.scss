@@ -6,6 +6,29 @@
   z-index: 1000;
 }
 
+.loading {
+  background-color: hsla(0,0%,100%,.8);
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+}
+
+.route-nav {
+  height: calc(100vh - 0px - #{$progress-top-height} - #{$nav-right-footer-height});
+  overflow: auto;
+    
+  .nav-right-header {
+    height: $nav-right-header-height;
+    display: flex;
+    font-weight: 600;
+    color: $font-color;
+    i {
+      color: $font-color-2;
+    }
+  }
+}
+
 #right {
     height: 100%;
     #docxviewer {

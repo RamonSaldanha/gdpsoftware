@@ -90,12 +90,12 @@
                     Seus modelos
                   </a>
                 </li>
-                <!-- <li class="nav-item" role="presentation">
-                  <a class="nav-link" id="comunity-tab" data-toggle="tab" href="#comunity" role="tab"
-                    aria-controls="comunity" aria-selected="false">
-                    Modelos da comunidade
+                <li class="nav-item" role="presentation">
+                  <a class="nav-link" id="ia-tab" data-toggle="tab" href="#ia" role="tab"
+                    aria-controls="ia" aria-selected="false">
+                    Modelos com IA
                   </a>
-                </li> -->
+                </li>
               </ul>
 
               <div class="tab-content w-100" id="mainTabContent">
@@ -139,8 +139,30 @@
                     </div>
                   </div>
                 </div>
-                <div class="tab-pane fade" id="comunity" role="tabpanel" aria-labelledby="comunity-tab">...</div>
-                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+                <div class="tab-pane fade" id="ia" role="tabpanel" aria-labelledby="ia-tab">
+                  <div class="row">
+                    <div class="col-xl-2 col-lg-3 menu-context-file">
+                      <div class="form__answer rounded-lg menu-context-file">
+                        <div style="z-index: 1; position: absolute; top: 0px; left: 16px; padding: 5px 10px; cursor: pointer;">
+                          <i class="fas fa-magic text-secondary"></i>
+                        </div> 
+                        <div id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <!-- <div aria-labelledby="dropdownMenuButton" class="dropdown-menu" style="cursor: pointer;"><a class="dropdown-item">Abrir</a> 
+                            <a class="dropdown-item">Fixar modelo</a>
+                          </div> -->
+                        </div> 
+                        <router-link class="text-dark" to="/ia-generator/peticao-inicial" >
+                          <label class="d-flex h-100 flex-column justify-content-between" @click="">
+                            <img src="assets/img/icons/document.png" width="45px"> 
+                            <div class="footer-label w-100 pl-2 d-flex align-items-center">
+                              Petição Inicial com IA
+                            </div>
+                          </label>
+                        </router-link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -150,6 +172,7 @@
 
         <!-- Se estiver na página de edição não aparece o menu right  -->
         <div id="right" class="position-relative h-100" :class="{ 'd-none': selected }">
+          <div class="loading" :class="[loading ? 'd-block' : 'd-none']"><div class="overlay"></div><div class="h-100 d-flex"><div class="spinner-border m-auto" role="status"><span class="visually-hidden"></span></div></div></div>
           <div :class="[rightSide ? 'd-none' : 'd-block']">
             <router-view></router-view>
           </div>
@@ -223,6 +246,7 @@
   <script src="./node_modules/vue/dist/vue.min.js"></script>
   <script src="./node_modules/vue-router/dist/vue-router.min.js"></script>
   <script src="./node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+  <script src="./assets/js/component-ia.js"></script>
   <script src="./assets/js/vue.js"></script>
   <script src="./assets/js/main.js"></script>
   <!-- expandir menu right -->

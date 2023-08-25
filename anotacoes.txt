@@ -1,3 +1,5 @@
   "build": {
     "extraResources": ["modelos/**/*","gerados/**/*"]
   },
+
+  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

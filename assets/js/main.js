@@ -23,6 +23,7 @@ const platformFileWay = () => {
 
 var documentsFolder = localStorage.getItem('documentsFolder');
 var modelsFolder = localStorage.getItem('modelsFolder');
+var apiKey = localStorage.getItem('apiKey');
 var rootFolder = localStorage.getItem('rootFolder');
 
 document.onkeyup = function(e) {
@@ -125,6 +126,7 @@ function verifyIfExistsData() {
 vm.documentsFolder = ( documentsFolder ) ? documentsFolder : folderWay('/documentos');
 vm.modelsFolder = ( modelsFolder ) ? modelsFolder : folderWay('/modelos');
 vm.rootFolder = ( rootFolder ) ? rootFolder : folderWay('/');
+vm.apiKey = ( apiKey ) ? apiKey : '';
 
 localStorage.setItem('documentsFolder', vm.documentsFolder);
 localStorage.setItem('modelsFolder', vm.modelsFolder);
@@ -223,6 +225,7 @@ $(document).ready(function(){
     $.each($('#generate-model').serializeArray(), function() {
       data[slugify(this.name)] = this.value;
     });
+
 
     var PizZip = require('pizzip');
     var Docxtemplater = require('docxtemplater');

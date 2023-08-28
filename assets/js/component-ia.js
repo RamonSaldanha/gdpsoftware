@@ -70,10 +70,10 @@ const IaGenerator = {
 				{ id: 1, nome: 'contestacao' },
 			],
 			formData: {
-				'area-do-direito': 'Direito do trabalho',
-				'caso-concreto': 'Trabalhou entre 2012 e 2015 - em todo tempo de trabalho foi afastado varias vezes, o maior tempo que passou afastado foi um ano. nos ultimos 5 anos, trabalhou 3 anos. Trabalhava de 4 horas da manhã as 18 horas. Trabalhava fazendo queijo perto de um forno. Salário de R$ 2.000,00. Trabalhava de domingo a domingo. Foi demitido sem justa causa e não recebeu nada.',
-				'natureza-da-acao': 'Reconhecimento de vínculo empregatício',
-				'objetivos': 'Reconhecimento de vínculo empregatício, horas extras, adicional noturno, adicional de insalubridade, aviso prévio, 13º salário, férias, FGTS, multa de 40% do FGTS, indenização por danos morais, honorários advocatícios',
+				// 'area-do-direito': 'Direito do trabalho',
+				// 'caso-concreto': 'Trabalhou entre 2012 e 2015 - em todo tempo de trabalho foi afastado varias vezes, o maior tempo que passou afastado foi um ano. nos ultimos 5 anos, trabalhou 3 anos. Trabalhava de 4 horas da manhã as 18 horas. Trabalhava fazendo queijo perto de um forno. Salário de R$ 2.000,00. Trabalhava de domingo a domingo. Foi demitido sem justa causa e não recebeu nada.',
+				// 'natureza-da-acao': 'Reconhecimento de vínculo empregatício',
+				// 'objetivos': 'Reconhecimento de vínculo empregatício, horas extras, adicional noturno, adicional de insalubridade, aviso prévio, 13º salário, férias, FGTS, multa de 40% do FGTS, indenização por danos morais, honorários advocatícios',
 			}
     };  
   },

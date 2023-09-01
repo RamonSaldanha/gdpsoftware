@@ -2,8 +2,8 @@ const { default: Swal } = require('sweetalert2');
 const OpenAI = require('openai');
 const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
-const MAX_TOKENS = 10000;
-const GPT_MODEL = "gpt-3.5-turbo-16k";
+const MAX_TOKENS = 7200;
+const GPT_MODEL = "gpt-4";
 
 const IaGenerator = {
   template: `
@@ -110,7 +110,7 @@ const IaGenerator = {
 					toast: true,
 					position: 'top-end',
 					showConfirmButton: true,
-					timer: 4500,
+					// timer: 4500,
 					title: title || message,
 					text: message,
 					icon: type,
@@ -144,10 +144,33 @@ const IaGenerator = {
 			const promptFundamentos = `${basePrompt} Dos fundamentos jurídicos: Fundamentem o caso de forma robusta, utilizando a legislação, princípios e jurisprudências da "${this.formData['area-do-direito']}" que sejam pertinentes ao caso concreto: "${this.formData['caso-concreto']}". Os fundamentos devem conduzir de forma lógica aos "${this.formData.objetivos}" e ser apresentados em formato de parágrafo contínuo, sem listas ou enumerações.`;
 	
 			try {
+
+					Swal.fire({
+						toast: true,
+						position: 'top-end',
+						title: 'Aguarde! Estamos redigindo os fatos...',
+						icon: 'info',  // Mude 'type' para 'icon'
+						showConfirmButton: true,
+						didOpen: () => {  // Corrija a sintaxe da função aqui
+							Swal.showLoading();
+						}
+					});
+				
 					const responseFatos = await this.createOpenAIPrompt(promptFatos);
 					
 					this.formData['dos-fatos'] = this.createParagraphs(responseFatos.choices[0].message.content);
-	
+
+					Swal.fire({
+						toast: true,
+						position: 'top-end',
+						title: 'Aguarde! Agora estamos redigindo os fundamentos...',
+						icon: 'info',  // Mude 'type' para 'icon'
+						showConfirmButton: true,
+						didOpen: () => {  // Corrija a sintaxe da função aqui
+							Swal.showLoading();
+						}
+					});
+
 					const responseFundamentos = await this.createOpenAIPrompt(promptFundamentos);
 					this.formData['dos-fundamentos'] = this.createParagraphs(responseFundamentos.choices[0].message.content);
 			} catch (error) {
@@ -164,7 +187,6 @@ const IaGenerator = {
 					toast: true,
 					position: 'top-end',
 					showConfirmButton: true,
-					timer: 4500
 			});
 	
 			var content;
@@ -203,215 +225,12 @@ const IaGenerator = {
 					title: 'O documento foi gerado!',
 					showConfirmButton: true,
 					confirmButtonText: 'Abrir na pasta de documentos gerados.',
-					timer: 10000,
+					// timer: 10000,
 					preConfirm: () => {
 							shell.showItemInFolder(fileName)
 					}
 			});
 		}
-		// async handlePrompt () {
-		// 	vm.loading = true;
-		// 	const OpenAI = require('openai');
-
-		// 	var promptFatos = `
-		// 		Caros assistentes IA,
-
-		// 		Estou trabalhando num caso na área de "${this.formData['area-do-direito']}" relacionado a "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Solicito sua ajuda na elaboração dos seguintes tópicos da petição inicial, e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações:
-				
-		// 		Dos fatos:
-				
-		// 		Descrevam os fatos do caso de forma detalhada, clara e persuasiva, narrando a situação apresentada em formato de parágrafo contínuo.
-		// 	`;
-
-		// 	var promptFundamentos = `
-		// 		Caros assistentes IA,
-
-		// 		Estou trabalhando num caso na área de "${this.formData['area-do-direito']}" relacionado a "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Solicito sua ajuda na elaboração dos seguintes tópicos da petição inicial, e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações:
-				
-		// 		Dos fundamentos jurídicos:
-				
-		// 		Fundamentem o caso de forma robusta, utilizando a legislação, princípios e jurisprudências da "${this.formData['area-do-direito']}" que sejam pertinentes ao caso concreto: "${this.formData['caso-concreto']}". Os fundamentos devem conduzir de forma lógica aos "${this.formData.objetivos}" e ser apresentados em formato de parágrafo contínuo, sem listas ou enumerações.
-		// 	`;
-
-		// 	// se vm apikey não estiver setada, acionar um aviso com swal
-		// 	if (vm.apiKey === '') {
-		// 		Swal.fire({
-		// 			toast: true,
-		// 			position: 'top-end',
-		// 			showConfirmButton: true,
-		// 			timer: 4500,
-		// 			title: 'Você precisa configurar sua API Key!',
-		// 			text: 'Clique em Definições e preencha o campo" para configurar sua API Key',
-		// 			icon: 'warning',
-		// 		})
-		// 		vm.loading = false;
-
-		// 		return
-		// 	}
-			
-		// 	try {
-		// 		var openai = new OpenAI({
-		// 			apiKey: vm.apiKey,
-		// 			dangerouslyAllowBrowser: true
-		// 		});
-	
-		// 	} catch (error) {
-		// 		Swal.fire({
-		// 			toast: true,
-		// 			position: 'top-end',
-		// 			showConfirmButton: true,
-		// 			timer: 4500,
-		// 			title: error.message,
-		// 			type: 'error',
-		// 		})
-		// 		vm.loading = false;
-		// 		return
-		// 	}
-
-		// 	try {
-		// 		const responseFatos = await openai.chat.completions.create({
-		// 			model: "gpt-3.5-turbo-16k",
-		// 			messages: [
-		// 				{
-		// 					"role": "user",
-		// 					"content": promptFatos
-		// 				}
-		// 			],
-		// 			temperature: 1,
-		// 			max_tokens: 10000,
-		// 			top_p: 1,
-		// 			frequency_penalty: 0,
-		// 			presence_penalty: 0,
-		// 		});
-				
-		// 		this.formData['dos-fatos'] = responseFatos.choices[0].message.content;
-				
-		// 	} catch (error) {
-		// 		Swal.fire({
-		// 			toast: true,
-		// 			position: 'top-end',
-		// 			showConfirmButton: true,
-		// 			timer: 4500,
-		// 			title: error.message,
-		// 			type: 'error',
-		// 		})
-		// 		vm.loading = false;
-		// 		return
-		// 	}
-			
-		// 	try {		
-		// 		const responseFundamentos = await openai.chat.completions.create({
-		// 			model: "gpt-3.5-turbo-16k",
-		// 			messages: [
-		// 				{
-		// 					"role": "user",
-		// 					"content": promptFundamentos
-		// 				}
-		// 			],
-		// 			temperature: 1,
-		// 			max_tokens: 10000,
-		// 			top_p: 1,
-		// 			frequency_penalty: 0,
-		// 			presence_penalty: 0,
-		// 		});
-				
-		// 		this.formData['dos-fundamentos'] = responseFundamentos.choices[0].message.content;
-				
-		// 	} catch (error) {
-		// 		Swal.fire({
-		// 			toast: true,
-		// 			position: 'top-end',
-		// 			showConfirmButton: true,
-		// 			timer: 4500,
-		// 			title: error.message,
-		// 			type: 'error',
-		// 		})
-		// 		vm.loading = false;
-		// 		return 
-		// 	}
-		
-		// 	vm.loading = false;
-
-		// 	this.handleInputs();
-
-		// },
-
-    // async handleInputs() {
-		// 	// this.formData
-
-
-		// 	const document = Swal.mixin({
-		// 		toast: true,
-		// 		position: 'top-end',
-		// 		showConfirmButton: true,
-		// 		timer: 4500
-		// 	})
-
-		// 	console.log(vm.modelsFolders)
-		// 	var PizZip = require('pizzip');
-		// 	var Docxtemplater = require('docxtemplater');
-			
-			
-		// 	//Load the docx file as a binary
-		// 	try {
-		// 		// console.log(vm.modelsFolder + platformFileWay() + modelName);
-		// 		var content = fs.readFileSync(vm.modelsFolder + platformFileWay() + 'peticao-inicial-ia.docx', 'binary');
-		// 	} catch (err) {
-		// 		document.fire({
-		// 			type: 'error',
-		// 			title: 'Não foi possível gerar um documento, selecione um modelo antes!'
-		// 		})
-		// 	}
-    
-		// 	var zip = new PizZip(content);
-    
-		// 	var doc = new Docxtemplater();
-		// 	doc.loadZip(zip);  
-		// 	doc.setOptions({linebreaks: true});
-
-
-			
-		// 	//set the templateVariables
-		// 	doc.setData(this.formData);
-			
-		// 	try {
-		// 		// render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
-		// 		doc.render()
-		// 	}
-		// 	catch (error) {
-		// 		var e = {
-		// 			message: error.message,
-		// 			name: error.name,
-		// 			stack: error.stack,
-		// 			properties: error.properties,
-		// 		}
-		// 		// console.log(JSON.stringify({error: e}));
-		// 		// The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
-		// 		throw error;
-		// 	}
-			
-		// 	var buf = doc.getZip()
-		// 	.generate({type: 'nodebuffer'});
-		// 	var today = new Date();
-			
-		// 	var month = (today.getMonth()+1).toString();
-		// 	let fileName = `${vm.documentsFolder}\\(${today.getDate()}-${month}-${today.getFullYear()} ${today.getHours()}hrs ${today.getMinutes()}min) peticao-inicial.docx`
-		// 	// buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-		// 	fs.writeFileSync(fileName, buf);
-	
-		// 	document.fire({
-		// 		type: 'success',
-		// 		title: 'O documento foi gerado!',
-		// 		showConfirmButton: true,
-		// 		confirmButtonText: 'Abrir na pasta de documentos gerados.',
-		// 		timer: 10000,
-		// 		preConfirm: () => {
-		// 			const {shell} = require('electron');
-		// 			shell.showItemInFolder(fileName)
-		// 		}
-		// 	})
-			
-		// },
 	}
 
 };

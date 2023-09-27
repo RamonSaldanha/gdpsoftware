@@ -3,14 +3,16 @@ const electron = require('electron')
 const { app, BrowserWindow } = electron
 const path = require('path')
 const ejse = require('ejs-electron')
-
+const { autoUpdater } = require('electron-updater');
 
 let mainWindow
 
 function createWindow () {
   const path = require("path");
   const fs = require("fs");
-  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize
+  const { width, height } = electron.screen.getPrimaryDisplay().workAreaSize;
+
+  autoUpdater.checkForUpdatesAndNotify();
 
   mainWindow = new BrowserWindow({
     width: width,
@@ -33,6 +35,15 @@ function createWindow () {
     mainWindow = null
   })
 }
+
+autoUpdater.on('update-available', () => {
+  console.log('Atualização disponível.');
+});
+
+autoUpdater.on('update-downloaded', () => {
+  console.log('Atualização baixada.');
+  autoUpdater.quitAndInstall();
+});
 
 app.on('ready', createWindow)
 

@@ -5,12 +5,22 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --ia32 --x64",
+    "dist": "electron-builder --ia32 --x64 -p always",
     "build": "electron-builder"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "build": {
     "productName": "Colabo",
+    "appId": "com.colabo.app",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ramonsaldanha",
+        "repo": "gdpsoftware",
+        "private": true,
+        "releaseType": "draft"
+      }
+    ],
     "extraResources": [
       "modelos/**/*",
       "documentos/**/*"

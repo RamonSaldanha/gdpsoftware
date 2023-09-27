@@ -2,7 +2,8 @@ const { default: Swal } = require('sweetalert2');
 const OpenAI = require('openai');
 const PizZip = require('pizzip');
 const Docxtemplater = require('docxtemplater');
-const MAX_TOKENS = 7200;
+let MAX_TOKENS = 8192;
+const MARGIN_TOKENS = 500;
 const GPT_MODEL = "gpt-4";
 
 const IaGenerator = {
@@ -45,6 +46,7 @@ const IaGenerator = {
   data() {
     return {
 			loading: false,
+			messageHistory: [],
       modelos: [
 				{ 
 					id: 1, 
@@ -70,10 +72,10 @@ const IaGenerator = {
 				{ id: 1, nome: 'contestacao' },
 			],
 			formData: {
-				// 'area-do-direito': 'Direito do trabalho',
-				// 'caso-concreto': 'Trabalhou entre 2012 e 2015 - em todo tempo de trabalho foi afastado varias vezes, o maior tempo que passou afastado foi um ano. nos ultimos 5 anos, trabalhou 3 anos. Trabalhava de 4 horas da manhã as 18 horas. Trabalhava fazendo queijo perto de um forno. Salário de R$ 2.000,00. Trabalhava de domingo a domingo. Foi demitido sem justa causa e não recebeu nada.',
-				// 'natureza-da-acao': 'Reconhecimento de vínculo empregatício',
-				// 'objetivos': 'Reconhecimento de vínculo empregatício, horas extras, adicional noturno, adicional de insalubridade, aviso prévio, 13º salário, férias, FGTS, multa de 40% do FGTS, indenização por danos morais, honorários advocatícios',
+				'area-do-direito': 'Direito do consumidor',
+				'caso-concreto': 'Larissa, no dia 17 de outubro de 2022 com intuito de adquirir crédito para comprar um imóvel passou a pesquisar nas redes sociais. Ela encontrou um anúncio nas redes sociais de um imóvel com entrada de entre R$ 8 e 10mil pagando o remanescente em parcelas de R$ 500,00. Ela estava muito inclinada em adquirir um imóvel porque morava de favor e a dona da casa estava pedindo de volta. Ao entrar em contato com a empresa-ré, foi dito que ela até dezembro de 2022 ela estaria no imóvel vendido Até então, ela achava que iria assinar um contrato de financiamento. Ela foi instruída a assinar o contrato e foi instruída a responder perguntas por telefone para uma financeira que seria a em tese, a matriz. Até então ela achava que iria dar certo. Eles foram muito persuasivos e orientaram que se ela não respondesse as perguntas da matriz, conforme eles orientavam, ela não teria seu crédito aceito. Eles ligaram primeiro para ela para se certificar de que ela responderia conforme orientaram. Posteriormente, ligaram dizendo que ela nao respondeu corretamente, advertindo-a que se ela respondesse que teria sido prometida crédito antecipado, ela não iria conseguir o crédito do imóvel. Nessa ocasião, ela já tinha pago o valor da entrada (R$ 8.923,08) da entrada do suposto financiamento e se sentiu bem pressionada a prosseguir com as orientações. Após o telefonema de confirmação da empresa de consórcio, ela recebeu acesso a um aplicativo da Promove, foi quando ela percebeu que teria na verdade adquirido um consórcio, que ela sequer sabia do que se tratava. Mas em um momento a vendedora da empresa passou a não responder as perguntas. Ela perdeu acesso ao usuário do aplicativo da "Promove". A mãe dela foi até a empresa e percebeu que a empresa teria saído do local. Uma outra pessoa indicou outro lugar e aí só então a vendedora do início entrou em contato, por nome ana luísa. Quando ela descobriu que era uma fraude, pediu desistência. Escreveu uma carta a mão para a desistência. Ela teria que passar por um sorteio para ser contemplada com a desistência. Quando recebeu resposta da desistência percebeu que só teria R$ 500,00 a receber. Mesmo assim nunca recebeu o dinheiro.',
+				'natureza-da-acao': 'Indenização por danos morais e materiais',
+				'objetivos': 'A autora busca a condenação da ré ao pagamento de indenização por danos morais e materiais, no valor de R$ 10.000,00 (dez mil reais), além de honorários advocatícios e custas processuais.',
 			}
     };  
   },
@@ -84,7 +86,50 @@ const IaGenerator = {
     }
   },
 	methods: {
+		countTokens(messages) {
+			// Função interna para contar tokens de um texto usando regex
+			function countTokensForText(text) {
+				const matches = text.match(/[\s\W]+/g);
+				return matches ? matches.length + 1 : 1;
+			}
+	
+			// Se não for um array, considera como uma única string
+			if (!Array.isArray(messages)) {
+				messages = [messages];
+			}
+	
+			// Conta os tokens para cada mensagem e soma tudo
+			return messages.reduce((totalTokens, message) => {
+				return totalTokens + countTokensForText(message.content);
+			}, 0);
+		},
 		async createOpenAIPrompt(promptContent) {
+			// Cria uma cópia do histórico atual para não modificar o original
+			let tempHistory = [...this.messageHistory];
+				
+			// Adiciona a nova mensagem à cópia do histórico
+			tempHistory.push({
+					role: "user",
+					content: promptContent
+			});
+
+			// Calcula os tokens para a cópia do histórico
+			const tokensUsed = this.countTokens(tempHistory);
+			
+			if (tokensUsed > MAX_TOKENS) {
+					this.displayAlert('Seu texto excede o limite de tokens permitidos, tente ser mais suscinto na narração do caso concreto', 'error');
+					throw new Error('Seu texto excede o limite de tokens permitidos');
+			} 
+			
+			const TOKENS_LIMITED = MAX_TOKENS - MARGIN_TOKENS - tokensUsed;
+		
+
+			this.messageHistory.push({
+        role: "user",
+        content: promptContent
+    	});
+
+			
 			try {
 					const openai = new OpenAI({
 							apiKey: vm.apiKey,
@@ -92,9 +137,9 @@ const IaGenerator = {
 					});
 					return await openai.chat.completions.create({
 							model: GPT_MODEL,
-							messages: [{ "role": "user", "content": promptContent }],
+							messages: this.messageHistory,
 							temperature: 1,
-							max_tokens: MAX_TOKENS,
+							max_tokens: TOKENS_LIMITED,
 							top_p: 1,
 							frequency_penalty: 0,
 							presence_penalty: 0,
@@ -124,6 +169,8 @@ const IaGenerator = {
 								.map(p => ({ line: p.trim() })); // mapeia cada parágrafo para o formato desejado
 	},
 	async handlePrompt() {
+			this.messageHistory = [];
+
 			vm.loading = true;
 	
 			if (!vm.apiKey) {
@@ -135,13 +182,13 @@ const IaGenerator = {
 			}
 	
 			const basePrompt = `
-					Caros assistentes IA,
-					Estou trabalhando num caso na área de "${this.formData['area-do-direito']}" relacionado a "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Solicito sua ajuda na elaboração do seguinte tópico da petição inicial, e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações:
+					Caro assistente IA,
+					Estou trabalhando num caso na área do "${this.formData['area-do-direito']}" relacionado ao seguinte caso concreto: "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Solicito sua ajuda na elaboração do seguinte tópico da petição inicial, e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações:
 			`;
 	
-			const promptFatos = `${basePrompt} Dos fatos: Descrevam os fatos do caso de forma detalhada, clara e persuasiva, narrando a situação apresentada em formato de parágrafo contínuo.`;
+			const promptFatos = `${basePrompt} Dos fatos: Descreva os fatos de forma clara e concisa. Evite textos longos, mas descreva todos os detalhes do caso concreto. O texto tem que ser fluido e de fácil compreensão, mas também tem que ser persuasivo para convencer que o autor tem o direito para atingir os seus objetivos. Utilize a terceira pessoa do singular, e evite usar a primeira pessoa do singular.`;
 	
-			const promptFundamentos = `${basePrompt} Dos fundamentos jurídicos: Fundamentem o caso de forma robusta, utilizando a legislação, princípios e jurisprudências da "${this.formData['area-do-direito']}" que sejam pertinentes ao caso concreto: "${this.formData['caso-concreto']}". Os fundamentos devem conduzir de forma lógica aos "${this.formData.objetivos}" e ser apresentados em formato de parágrafo contínuo, sem listas ou enumerações.`;
+			const promptFundamentos = `Agora, gostaria que você redigisse o tópico: "Fundamentos jurídicos". Este tópico deve conter os fundamentos na legislação que amparam o direito da parte autora. Lembre-se de redigir em formato de parágrafos, evitando listas ou enumerações, e de forma clara e concisa, mas também persuasiva, para convencer que o autor tem o direito para atingir os seus objetivos. Utilize a terceira pessoa do singular, e evite usar a primeira pessoa do singular.`;
 	
 			try {
 
@@ -157,7 +204,13 @@ const IaGenerator = {
 					});
 				
 					const responseFatos = await this.createOpenAIPrompt(promptFatos);
-					
+
+					// adiciona a resposta do sistema ao chat
+					// this.messageHistory.push({
+					// 	role: "system",
+					// 	content: responseFatos.choices[0].message.content
+					// });
+
 					this.formData['dos-fatos'] = this.createParagraphs(responseFatos.choices[0].message.content);
 
 					Swal.fire({
@@ -172,7 +225,15 @@ const IaGenerator = {
 					});
 
 					const responseFundamentos = await this.createOpenAIPrompt(promptFundamentos);
+					
+					// adiciona a resposta do sistema ao chat
+					// this.messageHistory.push({
+					// 	role: "system",
+					// 	content: responseFundamentos.choices[0].message.content
+					// });
+
 					this.formData['dos-fundamentos'] = this.createParagraphs(responseFundamentos.choices[0].message.content);
+
 			} catch (error) {
 					vm.loading = false;
 					return;

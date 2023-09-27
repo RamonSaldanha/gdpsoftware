@@ -17,4 +17,4 @@ For install the project you need to run the next command:
 
 ## Build
 
-`npm run build`
+`GH_TOKEN=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 npm run dist`

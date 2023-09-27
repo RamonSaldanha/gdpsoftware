@@ -1,6 +1,6 @@
 {
   "name": "advable-colabo-v2",
-  "version": "2.0.2",
+  "version": "1.0.1",
   "description": "Um gerador de documentos jurídicos",
   "main": "main.js",
   "scripts": {
@@ -37,10 +37,10 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "^6.0.8",
-    "electron-icon-maker": "0.0.5",
-    "electron-updater": "^6.1.4"
+    "electron-icon-maker": "0.0.5"
   },
   "dependencies": {
+    "electron-updater": "^6.1.4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "bootstrap": "^4.3.1",
     "docx": "^5.3.0",

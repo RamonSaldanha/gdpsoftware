@@ -183,12 +183,12 @@ const IaGenerator = {
 	
 			const basePrompt = `
 					Caro assistente IA,
-					Estou trabalhando num caso na área do "${this.formData['area-do-direito']}" relacionado ao seguinte caso concreto: "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Solicito sua ajuda na elaboração do seguinte tópico da petição inicial, e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações:
+					Estou trabalhando num caso na área do "${this.formData['area-do-direito']}" relacionado ao seguinte caso concreto: "${this.formData['caso-concreto']}" cuja natureza da ação é "${this.formData['natureza-da-acao']}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Na redação, utilize sempre a terceira pessoa do singular.
 			`;
 	
-			const promptFatos = `${basePrompt} Dos fatos: Descreva os fatos de forma clara e concisa. Evite textos longos, mas descreva todos os detalhes do caso concreto. O texto tem que ser fluido e de fácil compreensão, mas também tem que ser persuasivo para convencer que o autor tem o direito para atingir os seus objetivos. Utilize a terceira pessoa do singular, e evite usar a primeira pessoa do singular.`;
+			const promptFatos = `${basePrompt} Solicito ajuda na elaboração do tópico "dos fatos", e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações: Dos fatos: Descreva os fatos de forma clara e concisa. Evite parágrafos e textos longos, mas descreva todos os detalhes do caso concreto. O texto tem que ser fluido e de fácil compreensão, mas também tem que ser persuasivo para convencer que o autor tem o direito para atingir os seus objetivos.`;
 	
-			const promptFundamentos = `Agora, gostaria que você redigisse o tópico: "Fundamentos jurídicos". Este tópico deve conter os fundamentos na legislação que amparam o direito da parte autora. Lembre-se de redigir em formato de parágrafos, evitando listas ou enumerações, e de forma clara e concisa, mas também persuasiva, para convencer que o autor tem o direito para atingir os seus objetivos. Utilize a terceira pessoa do singular, e evite usar a primeira pessoa do singular.`;
+			const promptFundamentos = `Agora, gostaria que você redigisse o tópico: "Fundamentos jurídicos". Este tópico deve conter os fundamentos nas legislações que amparam o direito da parte autora. Lembre-se de redigir de forma clara e concisa, de fácil compreensão, mas também persuasiva, para convencer que o autor tem o direito para atingir os seus objetivos. `;
 	
 			try {
 

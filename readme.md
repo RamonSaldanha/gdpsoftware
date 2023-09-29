@@ -17,4 +17,6 @@ For install the project you need to run the next command:
 
 ## Build
 
-`GH_TOKEN=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 npm run dist`
+`GH_TOKEN=personal-key npm run dist`
+
+You find the personal key in your github account >> settings >> developer settings >> personal access tokens >> generate new token

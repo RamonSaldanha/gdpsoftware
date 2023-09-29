@@ -1,6 +1,6 @@
 {
-  "name": "advable-colabo-v2",
-  "version": "1.0.1",
+  "name": "advable-colabo",
+  "version": "1.0.0",
   "description": "Um gerador de documentos jurídicos",
   "main": "main.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "dist": "electron-builder --ia32 --x64 -p always",
     "build": "electron-builder"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/RamonSaldanha/gdpsoftware",
   "build": {
     "productName": "Colabo",
     "appId": "com.colabo.app",

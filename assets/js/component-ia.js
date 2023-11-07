@@ -2,9 +2,9 @@ const { default: Swal } = require("sweetalert2");
 const OpenAI = require("openai");
 const PizZip = require("pizzip");
 const Docxtemplater = require("docxtemplater");
-let MAX_TOKENS = 8192;
+let MAX_TOKENS = 4000;
 const MARGIN_TOKENS = 500;
-const GPT_MODEL = "gpt-4";
+const GPT_MODEL = "gpt-4-1106-preview";
 
 const IaGenerator = {
 	template: `
@@ -190,12 +190,14 @@ const IaGenerator = {
 
 			const basePrompt = `
 					Caro assistente IA,
-					Estou trabalhando num caso na área do "${this.formData["area-do-direito"]}" relacionado ao seguinte caso concreto: "${this.formData["caso-concreto"]}" cuja natureza da ação é "${this.formData["natureza-da-acao"]}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Na redação, utilize sempre a terceira pessoa do singular.
+					Estou trabalhando num caso na área do "${this.formData["area-do-direito"]}" relacionado ao seguinte caso concreto: "${this.formData["caso-concreto"]}" cuja natureza da ação é "${this.formData["natureza-da-acao"]}". Meu objetivo na ação é alcançar os seguintes pedidos: "${this.formData.objetivos}". Na redação, utilize sempre a terceira pessoa do singular e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações.
 			`;
 
-			const promptFatos = `${basePrompt} Solicito ajuda na elaboração do tópico "dos fatos", e peço que apresentem as informações em formato de parágrafos, evitando listas ou enumerações: Dos fatos: Descreva os fatos de forma clara e concisa. Evite parágrafos e textos longos, mas descreva todos os detalhes do caso concreto. O texto tem que ser fluido e de fácil compreensão, mas também tem que ser persuasivo para convencer que o autor tem o direito para atingir os seus objetivos.`;
+			const promptFatos = `${basePrompt} Solicito ajuda na elaboração do tópico "dos fatos":  Descreva os fatos de forma clara e concisa. Evite parágrafos e textos longos, mas descreva todos os detalhes do caso concreto. O texto tem que ser fluido e de fácil compreensão, mas também tem que ser persuasivo para convencer que o autor tem o direito para atingir os seus objetivos.`;
 
 			const promptFundamentos = `Agora, gostaria que você redigisse o tópico: "Fundamentos jurídicos". Este tópico deve conter os fundamentos nas legislações que amparam o direito da parte autora. Lembre-se de redigir de forma clara e concisa, de fácil compreensão, mas também persuasiva, para convencer que o autor tem o direito para atingir os seus objetivos. `;
+
+      const promptPedidos = `Solicito sua ajuda para redigir o tópico: "Dos pedidos". Este tópico deve conter os pedidos da petição inicial cumprindo a exigência do art. 319. Lembre-se que não precisa redigir todo fechamento da petição (data, oab e nome), apenas os pedidos.`
 
 			try {
 				Swal.fire({
@@ -213,10 +215,10 @@ const IaGenerator = {
 				const responseFatos = await this.createOpenAIPrompt(promptFatos);
 
 				// adiciona a resposta do sistema ao chat
-				// this.messageHistory.push({
-				// 	role: "system",
-				// 	content: responseFatos.choices[0].message.content
-				// });
+				this.messageHistory.push({
+					role: "system",
+					content: responseFatos.choices[0].message.content
+				});
 
 				this.formData["dos-fatos"] = this.createParagraphs(
 					responseFatos.choices[0].message.content
@@ -239,14 +241,42 @@ const IaGenerator = {
 				);
 
 				// adiciona a resposta do sistema ao chat
-				// this.messageHistory.push({
-				// 	role: "system",
-				// 	content: responseFundamentos.choices[0].message.content
-				// });
+				this.messageHistory.push({
+					role: "system",
+					content: responseFundamentos.choices[0].message.content
+				});
 
 				this.formData["dos-fundamentos"] = this.createParagraphs(
 					responseFundamentos.choices[0].message.content
 				);
+
+        
+				Swal.fire({
+					toast: true,
+					position: "top-end",
+					title: "Aguarde! Agora estamos redigindo os pedidos...",
+					icon: "info", // Mude 'type' para 'icon'
+					showConfirmButton: true,
+					didOpen: () => {
+						// Corrija a sintaxe da função aqui
+						Swal.showLoading();
+					},
+				});
+
+        const responsePedidos = await this.createOpenAIPrompt(
+          promptPedidos
+        );
+
+        // adiciona a resposta do sistema ao chat
+        this.messageHistory.push({
+          role: "system",
+          content: responsePedidos.choices[0].message.content
+        });
+
+        this.formData["dos-pedidos"] = this.createParagraphs(
+          responsePedidos.choices[0].message.content
+        );
+
 			} catch (error) {
 				vm.loading = false;
 				return;
